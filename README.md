@@ -1,14 +1,14 @@
-[![PHP](https://img.shields.io/badge/PHP-7.4+-8892BF.svg)](https://www.php.net/)  
-[![Node-RED](https://img.shields.io/badge/Node--RED-v2.1.5-brightgreen.svg)](https://nodered.org/)  
-[![Grafana](https://img.shields.io/badge/Grafana-v10.1-blue.svg)](https://grafana.com/)  
-[![Docker](https://img.shields.io/badge/Docker-v24.0-blue.svg)](https://www.docker.com/)  
-[![MySQL](https://img.shields.io/badge/MySQL-v8.0-orange.svg)](https://www.mysql.com/)
+
 # SAÉ23 – Mise en place d'une solution informatique pour l'entreprise
 
 > Projet réalisé dans le cadre du BUT Réseaux et Télécommunications – IUT de Blagnac  
 > Semestres 2 – 2025/2026
 
----
+[![PHP](https://img.shields.io/badge/PHP-7.4+-8892BF.svg)](https://www.php.net/)  
+[![Node-RED](https://img.shields.io/badge/Node--RED-v2.1.5-brightgreen.svg)](https://nodered.org/)  
+[![Grafana](https://img.shields.io/badge/Grafana-v10.1-blue.svg)](https://grafana.com/)  
+[![Docker](https://img.shields.io/badge/Docker-v24.0-blue.svg)](https://www.docker.com/)  
+[![MySQL](https://img.shields.io/badge/MySQL-v8.0-orange.svg)](https://www.mysql.com/)
 
 ## 📋 Description du projet
 
