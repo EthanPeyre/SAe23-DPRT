@@ -10,20 +10,20 @@
 [![Docker](https://img.shields.io/badge/Docker-v24.0-blue.svg)](https://www.docker.com/)  
 [![MySQL](https://img.shields.io/badge/MySQL-v8.0-orange.svg)](https://www.mysql.com/)
 
-## 📋 Description du projet
+##  Description du projet
 
 Ce projet a pour objectif de concevoir et déployer une solution informatique complète permettant la **visualisation de données issues de capteurs IoT** répartis dans les bâtiments de l'IUT.
 
 La solution repose sur deux approches complémentaires :
 
-### 🐳 Chaîne de traitement via Docker
+###  Chaîne de traitement via Docker
 Mise en place d'une stack de conteneurs pour collecter, stocker et visualiser les données en temps réel :
 - **Mosquitto** – Broker MQTT pour la réception des données capteurs
 - **Node-RED** – Programmation événementielle et routage des données
 - **InfluxDB** – Base de données orientée séries temporelles
 - **Grafana** – Visualisation et tableau de bord des métriques
 
-### 🌐 Site web dynamique
+###  Site web dynamique
 Développement d'une interface web hébergée sur un serveur LAMPP :
 - **Base de données MySQL** – Stockage structuré des bâtiments, salles, capteurs et mesures
 - **Gestion des comptes** – Rôles Administrateur, Gestionnaire et Utilisateur
@@ -32,7 +32,7 @@ Développement d'une interface web hébergée sur un serveur LAMPP :
 
 ---
 
-## 🏗️ Contexte
+##  Contexte
 
 Les données proviennent de capteurs déployés dans deux bâtiments de l'IUT. Chaque bâtiment dispose de deux capteurs et d'un gestionnaire dédié. L'objectif est d'offrir une interface conviviale permettant :
 - la consultation des mesures en temps réel,
@@ -41,7 +41,7 @@ Les données proviennent de capteurs déployés dans deux bâtiments de l'IUT. C
 
 ---
 
-## 🗄️ Modèle de données
+##  Modèle de données
 
 La base de données MySQL respecte les contraintes suivantes :
 
@@ -54,7 +54,7 @@ La base de données MySQL respecte les contraintes suivantes :
 
 ---
 
-## 🖥️ Pages du site web
+##  Pages du site web
 
 | Page | Accès | Description |
 |---|---|---|
@@ -66,38 +66,50 @@ La base de données MySQL respecte les contraintes suivantes :
 
 ---
 
-## 🛠️ Technologies utilisées
+##  Technologies utilisées
 
 - **Système** : GNU/Linux (Lubuntu) sur machine virtuelle
 - **Langages** : HTML5, CSS3, PHP, JavaScript, Bash
-- **Serveur web** : LAMPP (Apache + MySQL + PHP)
+- **Serveur web** : XAMPP (Apache + MySQL + PHP)
 - **Conteneurs** : Docker (Mosquitto, Node-RED, InfluxDB, Grafana)
 - **Protocole IoT** : MQTT
 - **Versionning** : Git & GitHub
 
 ---
 
-## 📅 Livrables
+##  Livrables
 
 | Livrable | Contenu | Date limite |
 |---|---|---|
+| **Séances** | Compte rendu des manioulations individuelles | Continu |
 | **L1** | GANTT + schéma conception BD | 07/06/2026 à 18h |
 | **L2 & L3** | Flow Node-RED + Dashboard Grafana | 14/06/2026 à 18h |
 | **L4** | Version finale du projet + URL GitHub | 21/06/2026 à 18h |
 
 ---
 
-## 👥 Équipe
+##  Équipe
 
-| Prénom Nom | Rôle |
+| Prénom Nom | Rôles |
 |---|---|
-| Lisa-Marie RAKOTOSON | ... |
-| Julien DEWATINE | ... |
-| Mathéo TASSIN | ... |
-| Ethan PEYRE | ... |
+| Lisa-Marie RAKOTOSON | Gestion de projet, Base de Données, MySQL |
+| Julien DEWATINE | Conteneur Node-RED, InfluxDB, Grafana et Données MQTT |
+| Mathéo TASSIN | Conteneur Node-RED, InfluxDB, Grafana et Données MQTT |
+| Ethan PEYRE | Serveur web XAMPP et PHPMyAdmin |
+
+---
+
+## Contraintes
+
+- **Environnement** : machine virtuelle
+- **Système d’exploitation** : GNU/Linux
+- **Langages autorisés** : HTML5, CSS3, PHP, Javascript, Bash, C, Python.
+- Codes documentés (commentaires pertinents dans le code) **en anglais**
+- Publication sur un **serveur web** dédié (xampp)
+- Gestion de version via **Git et Github**
 
 ---
 
 ## 📄 Licence
 
-Projet académique – IUT de Blagnac, département RT – 2025/2026
+Situation d'apprentissage et d'évaluation 23 – IUT de Blagnac, département RT – 2025/2026
