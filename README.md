@@ -91,9 +91,10 @@ La base de données MySQL respecte les contraintes suivantes :
 
 | Prénom Nom | Rôle |
 |---|---|
-| ... | ... |
-| ... | ... |
-| ... | ... |
+| Lisa-Marie | RAKOTOSON |
+| Julien | DEWATINE |
+| Mathéo | TASSIN |
+| Ethan | PEYRE |
 
 ---
 
