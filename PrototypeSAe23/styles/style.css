@@ -1,0 +1,106 @@
+/*
+Palette de couleur
+Blanc pastel   #fdf6f2   (253,246,242)
+Bleu pastel    #c0d8e3   (192,216,227)
+Marron pastel  #a78d8a   (167,141,138)
+Rouge pastel   #e18a7a   (225,138,122)
+Orange pastel  #eeb9a2   (238,185,162)
+*/
+
+/* ── Variables ─────────────────────────────── */
+:root {
+  --color-bg:      #fdf6f2;
+  --color-blue:    #c0d8e3;
+  --color-brown:   #a78d8a;
+  --color-red:     #e18a7a;
+  --color-orange:  #eeb9a2;
+  --color-white:   #ffffff;
+  --color-text:    #3a2e2c;
+
+  --font-main: Georgia, 'Times New Roman', serif;
+  --font-ui:   'Segoe UI', Tahoma, Geneva, sans-serif;
+}
+
+/* ── Reset de base ──────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── Body ───────────────────────────────────── */
+body {
+  background-color: var(--color-bg);
+  font-family: var(--font-ui);
+  color: var(--color-text);
+  padding-top: 0; /* ← mettre 0, ou supprimer la ligne */
+}
+
+/* ── Header ─────────────────────────────────── */
+header {
+  background-color: var(--color-blue);
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.10);
+  font-family: var(--font-main);
+}
+
+header h1 {
+  text-align: center;
+  font-weight: 700;
+  color: var(--color-white);
+  padding: 20px 0 8px;
+  letter-spacing: 0.03em;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+
+/* ── Navigation ─────────────────────────────── */
+nav ul {
+  list-style-type: none;
+  display: flex;
+  margin: 0;
+  padding: 0;
+  background-color: var(--color-brown);
+  overflow: hidden;
+}
+
+nav ul li {
+  border-right: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+nav ul li:last-child {
+  border-right: none;
+  margin-left: auto; /* pousse le dernier élément à droite */
+  border-left: 1px solid rgba(255, 255, 255, 0.25); /* ← ajoute ça */
+}
+
+nav ul li:first-child {
+  background-color: var(--color-red);
+}
+
+nav ul li a {
+  display: block;
+  color: var(--color-white);
+  text-align: center;
+  padding: 14px 20px;
+  text-decoration: none;
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+nav ul li a:hover:not(.first) {
+  background-color: var(--color-orange);
+  color: var(--color-text);
+}
+
+
+/* ── Listes génériques ───────────────────────── */
+ul {
+  list-style-type: none;
+  padding: 0;
+  text-align: center;
+}
