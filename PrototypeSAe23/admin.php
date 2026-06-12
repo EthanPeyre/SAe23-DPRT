@@ -1,7 +1,9 @@
+
 <?php
 session_start();
 
-if (!isset($_SESSION['admin'])) {
+// Vérifie le bon nom de session
+if (!isset($_SESSION['auth']) || $_SESSION['auth'] !== TRUE) {
     header("Location: login.php");
     exit();
 }

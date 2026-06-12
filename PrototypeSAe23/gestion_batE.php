@@ -1,8 +1,8 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['gestion'])) {
-    header("Location: gest.php");
+if (!isset($_SESSION['auth_gest']) || $_SESSION['auth_gest'] !== TRUE) {
+    header("Location: login.php");
     exit();
 }
 ?>
