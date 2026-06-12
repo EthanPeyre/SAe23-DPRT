@@ -1,44 +1,87 @@
 <?php
 session_start();
 
-if (isset($_SESSION['admin'])) {
+// Redirection si déjà connecté
+if (isset($_SESSION['auth']) && $_SESSION['auth'] === TRUE) {
     header("Location: admin.php");
     exit();
 }
-
-if (isset($_SESSION['gestion'])) {
+if (isset($_SESSION['auth_gest']) && $_SESSION['auth_gest'] === TRUE) {
     header("Location: gest.php");
     exit();
 }
 
-$erreur = "";
+$_SESSION["auth"]      = FALSE;
+$_SESSION["auth_gest"] = FALSE;
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    require 'mysql.php';
+if ($_SERVER['REQUEST_METHOD'] === 'POST')
+{
+    $type   = $_REQUEST["type"];
+    $motdep = $_REQUEST["mdp"];
 
-    $login = mysqli_real_escape_string($id_bd, $_POST['login']);
-    $mdp   = mysqli_real_escape_string($id_bd, $_POST['mdp']);
+    if ($type === "admin")
+    {
+        if (empty($motdep))
+            header("Location: login_error.php");
+        else
+        {
+            include("mysql.php");
 
-    $sql       = "SELECT * FROM Administration WHERE login = '$login' AND mdp = '$mdp'";
-    $resultat  = mysqli_query($id_bd, $sql);
-    $admin     = mysqli_fetch_assoc($resultat);
-    $gestion     = mysqli_fetch_assoc($resultat);
+            $requete  = "SELECT mdp FROM Administration WHERE login = 'admin'";
+            $resultat = mysqli_query($id_bd, $requete)
+                or die("Execution de la requete impossible : $requete");
 
-    if ($admin) {
-        $_SESSION['admin'] = true;
-        $_SESSION['login'] = $admin['login'];
-        header("Location: admin.php");
-        exit();
-        
-    } elseif ($gestion) {
-        $_SESSION['gestion'] = true;
-        $_SESSION['login'] = $gestion['login'];
-        header("Location: gest.php");
-        exit(); 
-    
-    } else {
-                    mysqli_close($id_bd);
-            echo "<script type='text/javascript'>document.location.replace('login_error.php');</script>";
+            $ligne = mysqli_fetch_row($resultat);
+            if ($motdep == $ligne[0])
+            {
+                $_SESSION["auth"] = TRUE;
+                mysqli_close($id_bd);
+                echo "<script type='text/javascript'>document.location.replace('admin.php');</script>";
+            }
+            else
+            {
+                $_SESSION = array();
+                session_destroy();
+                unset($_SESSION);
+                mysqli_close($id_bd);
+                echo "<script type='text/javascript'>document.location.replace('login_error.php');</script>";
+            }
+        }
+    }
+    elseif ($type === "gest")
+    {
+        $login = $_REQUEST["login"];
+
+        if (empty($login) || empty($motdep))
+            header("Location: login_error.php");
+        else
+        {
+            include("mysql.php");
+
+            $login  = mysqli_real_escape_string($id_bd, $login);
+            $motdep = mysqli_real_escape_string($id_bd, $motdep);
+
+            $requete  = "SELECT ges_login FROM batiment WHERE ges_login = '$login' AND ges_mdp = '$motdep'";
+            $resultat = mysqli_query($id_bd, $requete)
+                or die("Execution de la requete impossible : $requete");
+
+            $ligne = mysqli_fetch_row($resultat);
+            if ($ligne)
+            {
+                $_SESSION["auth_gest"] = TRUE;
+                $_SESSION["ges_login"] = $login;
+                mysqli_close($id_bd);
+                echo "<script type='text/javascript'>document.location.replace('gest.php');</script>";
+            }
+            else
+            {
+                $_SESSION = array();
+                session_destroy();
+                unset($_SESSION);
+                mysqli_close($id_bd);
+                echo "<script type='text/javascript'>document.location.replace('login_error.php');</script>";
+            }
+        }
     }
 }
 ?>
@@ -47,35 +90,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Page Admin</title>
+    <title>Connexion</title>
     <link rel="stylesheet" type="text/css" href="./styles/style.css" />
-        <!-- Menu -->
-    <header>
-		 <nav>
-			<ul>		
-				<li><a href="index.html" >Accueil</a></li>
-				<li><a href="login.php" >Se connecter</a></li>
-				<li><a href="consult.html">Consultation</a></li>
-				<li><a href="gestion.html">Gestion du projet</a></li>
-		</ul> 
-	</nav>
- </header>
 </head>
 <body>
-    <h1>Connexion Administrateur</h1>
 
-    <?php if ($erreur): ?>
-        <p style="color:red;"><?php echo $erreur; ?></p>
-    <?php endif; ?>
+    <!-- Menu -->
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Accueil</a></li>
+                <li><a href="login.php">Se connecter</a></li>
+                <li><a href="consult.html">Consultation</a></li>
+                <li><a href="gestion.html">Gestion du projet</a></li>
+            </ul>
+        </nav>
+    </header>
 
-    <form method="POST">
-        <label>Login :</label><br>
-        <input type="text" name="login" required><br><br>
+    <h1>Connexion</h1>
+
+    <form method="POST" action="login.php">
+
+        <label>Type de connexion :</label><br>
+        <select name="type" id="type" onchange="toggleLogin()">
+            <option value="admin">Administrateur</option>
+            <option value="gest">Gestionnaire</option>
+        </select><br><br>
+
+        <div id="champ_login" style="display:none;">
+            <label>Login :</label><br>
+            <input type="text" name="login"><br><br>
+        </div>
 
         <label>Mot de passe :</label><br>
         <input type="password" name="mdp" required><br><br>
 
         <button type="submit">Se connecter</button>
+
     </form>
+
+    <script>
+        function toggleLogin() {
+            var type = document.getElementById('type').value;
+            var champLogin = document.getElementById('champ_login');
+            if (type === 'gest')
+                champLogin.style.display = 'block';
+            else
+                champLogin.style.display = 'none';
+        }
+    </script>
+
 </body>
 </html>
