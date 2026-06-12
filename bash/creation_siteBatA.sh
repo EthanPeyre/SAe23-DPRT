@@ -44,33 +44,38 @@ AVG_E101=$(echo "$VALUES_Hall-amphi" | awk '{sum+=$1} END {print sum/NR}')
 # ==============================
 # Start HTML
 # ==============================
-echo "<!DOCTYPE html>" > "$OUTPUT"
-echo "<html lang=\"en\">" >> "$OUTPUT"
-echo "<head>" >> "$OUTPUT"
-echo "  <meta charset=\"UTF-8\">" >> "$OUTPUT"
-echo "  <meta http-equiv=\"refresh\" content=\"60\">" >> "$OUTPUT"
-echo "  <title>Temperature Monitoring</title>" >> "$OUTPUT"
-echo "  <link rel=\"stylesheet\" href=\"styles/style.css\">" >> "$OUTPUT"
-echo "</head>" >> "$OUTPUT"
-echo "<body>" >> "$OUTPUT"
 
-echo "<h1>Temperature Monitoring – IUT Blagnac</h1>" >> "$OUTPUT"
-echo "<div class=\"container\">" >> "$OUTPUT"
+cat <<EOF >> "$OUTPUT"
+<!DOCTYPE html>
+<html lang=\"fr\">
 
-# ==============================
-# Room Amphi 1
-# ==============================
-echo "<div class=\"room\">" >> "$OUTPUT"
-echo "<h2>Amphi 1 (Ground floor)</h2>" >> "$OUTPUT"
+<!-- ============================== START HTML ============================== --!>
 
-echo "<div class=\"stats\">" >> "$OUTPUT"
-echo "<p>Min: $MIN_Amphi1 °C</p>" >> "$OUTPUT"
-echo "<p>Max: $MAX_Amphi1 °C</p>" >> "$OUTPUT"
-echo "<p>Average: $AVG_Amphi1 °C</p>" >> "$OUTPUT"
-echo "</div>" >> "$OUTPUT"
+<head>
+  <meta charset=\"UTF-8\">
+  <meta http-equiv=\"refresh\" content=\"60\">
+  <title>Temperature Monitoring</title>
+  <link rel=\"stylesheet\" href=\"styles/style.css\">
+</head>
+<body>
 
-echo "<table>" >> "$OUTPUT"
-echo "<tr><th>Date</th><th>Luminosite (lux)</th></tr>" >> "$OUTPUT"
+<h1>Temperature Monitoring – IUT Blagnac</h1>
+<div class=\"container\">
+
+<!-- ============================== ROOM AMPHI 1 ============================== --!>
+
+<div class=\"room\">
+<h2>Amphi 1 (Ground floor)</h2>
+
+<div class=\"stats\">
+<p>Min: $MIN_Amphi1 °C</p>
+<p>Max: $MAX_Amphi1 °C</p>
+<p>Average: $AVG_Amphi1 °C</p>
+</div>
+
+<table>
+<tr><th>Date</th><th>Luminosite (lux)</th></tr>
+EOF
 
 echo "$RECENT_DATA" | grep ";Amphi;" | while read line
 do
@@ -79,23 +84,24 @@ do
     echo "<tr><td>$DATE</td><td>$VALUE</td></tr>" >> "$OUTPUT"
 done
 
-echo "</table>" >> "$OUTPUT"
-echo "</div>" >> "$OUTPUT"
+cat <<EOF >> "$OUTPUT"
+</table>
+</div>
 
-# ==============================
-# Hall Amphi
-# ==============================
-echo "<div class=\"room\">" >> "$OUTPUT"
-echo "<h2>Hall-amphi ( Groundfloor )</h2>" >> "$OUTPUT"
+<!-- ============================== ENTRY HALL ============================== --!>
 
-echo "<div class=\"stats\">" >> "$OUTPUT"
-echo "<p>Min: $MIN_Hall-amphi °C</p>" >> "$OUTPUT"
-echo "<p>Max: $MAX_Hall-amphi °C</p>" >> "$OUTPUT"
-echo "<p>Average: $AVG_Hall-amphi °C</p>" >> "$OUTPUT"
-echo "</div>" >> "$OUTPUT"
+<div class=\"room\">
+<h2>Hall-amphi ( Groundfloor )</h2>
 
-echo "<table>" >> "$OUTPUT"
-echo "<tr><th>Date</th><th>Humidite ( % )</th></tr>" >> "$OUTPUT"
+<div class=\"stats\">
+<p>Min: $MIN_Hall-amphi °C</p>
+<p>Max: $MAX_Hall-amphi °C</p>
+<p>Average: $AVG_Hall-amphi °C</p>
+</div>
+
+<table>
+<tr><th>Date</th><th>Humidite ( % )</th></tr>
+EOF
 
 echo "$RECENT_DATA" | grep ";Hall-amphi;" | while read line
 do
@@ -104,29 +110,29 @@ do
     echo "<tr><td>$DATE</td><td>$VALUE</td></tr>" >> "$OUTPUT"
 done
 
-echo "</table>" >> "$OUTPUT"
-echo "</div>" >> "$OUTPUT"
+cat <<EOF >> "$OUTPUT"
+</table>
+</div>
 
-# ==============================
-# End HTML
-# ==============================
-echo "</div>" >> "$OUTPUT"
-echo "<footer class=\"site-footer\">" >> "$OUTPUT"
-echo "  <div class=\"validators\">" >> "$OUTPUT"
+<!-- ============================== END HTML ============================== --!>
 
-echo "    <a href=\"https://validator.w3.org/nu/?doc=http%3A%2F%2Fdewatine.atwebpages.com%2FSAE15%2Findex.html\" target=\"_blank\">" >> "$OUTPUT"
-echo "      <img src=\"img/validationhtml.png\" alt=\"HTML5 Valide !\">" >> "$OUTPUT"
-echo "    </a>" >> "$OUTPUT"
+</div>
+<footer class=\"site-footer\">
+  <div class=\"validators\">
 
-echo "    <a href=\"https://jigsaw.w3.org/css-validator/validator?uri=http%3A%2F%2Fdewatine.atwebpages.com%2FSAE15%2Fstyles%2Fstyle.css\" target=\"_blank\">" >> "$OUTPUT"
-echo "      <img src=\"http://jigsaw.w3.org/css-validator/images/vcss-blue\" alt=\"CSS Valide !\">" >> "$OUTPUT"
-echo "    </a>" >> "$OUTPUT"
+    <a href=\"https://validator.w3.org/nu/?doc=http%3A%2F%2Fdewatine.atwebpages.com%2FSAE15%2Findex.html\" target=\"_blank\">" >> "$OUTPUT"
+      <img src=\"img/validationhtml.png\" alt=\"HTML5 Valide !\">" >> "$OUTPUT"
+    </a>" >> "$OUTPUT"
 
-echo "  </div>" >> "$OUTPUT"
-echo "</footer>" >> "$OUTPUT"
-echo "</body>" >> "$OUTPUT"
-echo "</html>" >> "$OUTPUT"
-# curl -T "$OUTPUT" ftp://dewatine.atwebpages.com/SAE15/ \
-# --user "4689065_dewatine:;!WK5DkJ45n6Z"
+    <a href=\"https://jigsaw.w3.org/css-validator/validator?uri=http%3A%2F%2Fdewatine.atwebpages.com%2FSAE15%2Fstyles%2Fstyle.css\" target=\"_blank\">" >> "$OUTPUT"
+      <img src=\"http://jigsaw.w3.org/css-validator/images/vcss-blue\" alt=\"CSS Valide !\">" >> "$OUTPUT"
+    </a>
+
+  </div>
+</footer>
+</body>
+echo "</html>
+EOF
+
 
 
