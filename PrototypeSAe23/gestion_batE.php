@@ -27,7 +27,7 @@ if (!isset($_SESSION['gestion'])) {
 </head>
 <body>
     <h1>Bienvenue, <?php echo htmlspecialchars($_SESSION['gestion']); ?> !</h1>
-    <p>Tu es sur la page réservée a la gestion de base de données.</p>
+    <p>Tu es sur la page réservée a la gestion de base de données au niveau du batiment E.</p>
 
     <a href="logout.php">Se déconnecter</a>
 </body>
