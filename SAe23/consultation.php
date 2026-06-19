@@ -7,6 +7,7 @@
     <!-- Menu -->
     <header>
 		 <nav>
+		 <ul> 
 				<li><a href="index.html" >Accueil</a></li>
 				<li><a href="consultation.php">Consultation</a></li>
 				<li><a href="MentionsLegales.html">Mention légales</a></li>
@@ -22,7 +23,7 @@
     <div><h1><br />Consultation des données<br /><br /></h1></div>
     <hr/>
 	<h2>Vue d'ensemble de l'ensemble du parc de capteurs</h2>
-        <p>Ce tableau répertorie la dernière valeur reçue pour l'intégralité des modules IoT déployés.</p>
+        <p>Ce tableau répertorie la dernière valeur reçue pour l intégralité des modules IoT déployés.</p>
 
     <section>
 			<table class="centre">

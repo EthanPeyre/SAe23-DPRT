@@ -19,23 +19,23 @@ if (!isset($_SESSION['auth_gest']) || $_SESSION['auth_gest'] !== TRUE) {
     <link rel="stylesheet" type="text/css" href="./styles/style.css" />
         <!-- Menu -->
     <header>
+		<nav>		
+			<ul>		
 				<li><a href="index.html" >Accueil</a></li>
 				<li><a href="consultation.php">Consultation</a></li>
 				<li><a href="MentionsLegales.html">Mention légales</a></li>
 				<li><a href="gestion_projet.html">Gestion du projet</a></li>
 				<li><a href="login.php" >Se connecter</a></li>
-			<ul>		
-
 		</ul> 
 	</nav>
  </header>
 </head>
 <body>
-          <h2>Bienvenue, <?php echo htmlspecialchars($_SESSION['gestion'] ?? $_SESSION['username'] ?? 'Gestionnaire'); ?> !</h2>
+         <h2>Bienvenue, <php echo htmlspecialchars($_SESSION['gestion'] ?? $_SESSION['username'] ?? 'Gestionnaire'); ?> !</h2>
         <p class="alerte-info">
-            Vous êtes connecté sur l'espace de suivi du <strong><?php echo htmlspecialchars($batiment['nom_batiment']); ?></strong>.
+            Vous êtes connecté sur l espace de suivi du <strong><?php echo htmlspecialchars($batiment['nom_batiment']); ?></strong>.
         </p>
-    </section>
+    
 
     <a href="logout.php">Se déconnecter</a>
 
