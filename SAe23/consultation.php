@@ -87,7 +87,6 @@
  
 						mysqli_close($id_bd);
 					?>
-   </header>
    <footer>
     <p><a href="index.html">Acceuil</a></p>
     <p><a href="login.php">Acc&egrave;s limit&eacute; : Administration de la base de donn&eacute;es</a></p>

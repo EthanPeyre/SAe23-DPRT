@@ -39,7 +39,7 @@ if (!isset($_SESSION['auth_gest']) || $_SESSION['auth_gest'] !== TRUE) {
     
 
     <a href="logout.php">Se déconnecter</a>
-
+	<hr>
 <section>
 			<h2>Mesures d&eacute;taill&eacute;es</h2>
 			<table class="centre">
@@ -145,5 +145,9 @@ if (!isset($_SESSION['auth_gest']) || $_SESSION['auth_gest'] !== TRUE) {
 				</tbody>
 			</table>
 		</section>
+		   <footer>
+    <p><a href="index.html">Acceuil</a></p>
+    <p><a href="login.php">Acc&egrave;s limit&eacute; : Administration de la base de donn&eacute;es</a></p>
+   </footer>
 </body>
 </html>
