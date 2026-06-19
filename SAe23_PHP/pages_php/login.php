@@ -1,68 +1,93 @@
 <?php
-/* login.php
- * Login page for administrators and building managers.
- * Uses PHP sessions to persist the authenticated user across pages.
- * Passwords are stored as MD5 hashes in the database.
- */
+session_start();
 
-$page_title   = 'Connexion – SAE23 IUT Blagnac';
-$current_page = 'login';
-
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+// Redirection si déjà connecté
+if (isset($_SESSION['auth']) && $_SESSION['auth'] === TRUE) {
+    header("Location: admin.php");
+    exit();
+}
+if (isset($_SESSION['auth_gest']) && $_SESSION['auth_gest'] === TRUE) {
+    header("Location: gest.php");
+    exit();
 }
 
-// Redirect already-logged-in users
-if (isset($_SESSION['user_id'])) {
-    header('Location: index.php');
-    exit;
-}
+$_SESSION["auth"]      = FALSE;
+$_SESSION["auth_gest"] = FALSE;
 
-require_once 'db_connect.php';
+if ($_SERVER['REQUEST_METHOD'] === 'POST')
+{
+    $type   = $_REQUEST["type"];
+    $motdep = $_REQUEST["mdp"];
 
-$erreur = '';
+    if ($type === "admin")
+    {
+        if (empty($motdep))
+            header("Location: login_error.php");
+        else
+        {
+            include("mysql.php");
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $requete  = "SELECT mdp FROM Administration WHERE login = 'admin'";
+            $resultat = mysqli_query($id_bd, $requete)
+                or die("Execution de la requete impossible : $requete");
 
-    // Sanitize inputs
-    $login = trim($_POST['login'] ?? '');
-    $mdp   = trim($_POST['mdp']   ?? '');
-
-    if ($login === '' || $mdp === '') {
-        $erreur = 'Veuillez renseigner le login et le mot de passe.';
-    } else {
-        // Hash the password with MD5 (as required by the specifications)
-        $mdp_md5 = md5($mdp);
-        $login_esc = mysqli_real_escape_string($conn, $login);
-
-        $sql = "SELECT c.id_compte, c.login, c.role
-                FROM Compte c
-                WHERE c.login = '$login_esc'
-                  AND c.mdp   = '$mdp_md5'
-                LIMIT 1";
-
-        $res = mysqli_query($conn, $sql);
-
-        if ($res && mysqli_num_rows($res) === 1) {
-            $user = mysqli_fetch_assoc($res);
-
-            // Store user info in session
-            $_SESSION['user_id']  = $user['id_compte'];
-            $_SESSION['username'] = $user['login'];
-            $_SESSION['role']     = $user['role'];     // 'admin' or 'gestionnaire'
-
-            // Redirect according to role
-            if ($user['role'] === 'admin') {
-                header('Location: administration.php');
-            } else {
-                header('Location: gestion.php');
+            $ligne = mysqli_fetch_row($resultat);
+            if ($ligne && $motdep == $ligne[0])
+            {
+                $_SESSION["auth"] = TRUE;
+                mysqli_close($id_bd);
+                echo "<script type='text/javascript'>document.location.replace('admin.php');</script>";
             }
-            exit;
-        } else {
-            $erreur = 'Login ou mot de passe incorrect.';
+            else
+            {
+                $_SESSION = array();
+                session_destroy();
+                unset($_SESSION);
+                mysqli_close($id_bd);
+                echo "<script type='text/javascript'>document.location.replace('login_error.php');</script>";
+            }
+        }
+    }
+    elseif ($type === "gest")
+    {
+        $login = $_REQUEST["login"];
+
+        if (empty($login) || empty($motdep))
+            header("Location: login_error.php");
+        else
+        {
+            include("mysql.php");
+
+            $login  = mysqli_real_escape_string($id_bd, $login);
+            $motdep = mysqli_real_escape_string($id_bd, $motdep);
+
+            /* On recupere egalement id_bat, necessaire pour que gest.php
+               sache de quel batiment afficher les mesures */
+            $requete  = "SELECT ges_login, id_bat FROM batiment WHERE ges_login = '$login' AND ges_mdp = '$motdep'";
+            $resultat = mysqli_query($id_bd, $requete)
+                or die("Execution de la requete impossible : $requete");
+
+            $ligne = mysqli_fetch_row($resultat);
+            if ($ligne)
+            {
+                $_SESSION["auth_gest"] = TRUE;
+                $_SESSION["ges_login"] = $login;
+                $_SESSION["id_bat"]    = $ligne[1];
+                mysqli_close($id_bd);
+                echo "<script type='text/javascript'>document.location.replace('gest.php');</script>";
+            }
+            else
+            {
+                $_SESSION = array();
+                session_destroy();
+                unset($_SESSION);
+                mysqli_close($id_bd);
+                echo "<script type='text/javascript'>document.location.replace('login_error.php');</script>";
+            }
         }
     }
 }
+
 
 require_once 'header.php';
 ?>
@@ -72,26 +97,36 @@ require_once 'header.php';
     <section>
         <h2>Connexion</h2>
 
-        <?php if ($erreur !== ''): ?>
-            <p class="alerte-erreur"><?php echo htmlspecialchars($erreur); ?></p>
-        <?php endif; ?>
+    <form method="POST" action="login.php">
 
-        <form method="post" action="login.php">
-            <fieldset>
-                <legend>Identifiants</legend>
+        <label>Type de connexion :</label><br>
+        <select name="type" id="type" onchange="toggleLogin()">
+            <option value="admin">Administrateur</option>
+            <option value="gest">Gestionnaire</option>
+        </select><br><br>
 
-                <label for="login">Login :</label>
-                <input type="text" id="login" name="login" required
-                       placeholder="Votre identifiant"
-                       value="<?php echo htmlspecialchars($_POST['login'] ?? ''); ?>">
+        <div id="champ_login" style="display:none;">
+            <label>Login :</label><br>
+            <input type="text" name="login"><br><br>
+        </div>
 
-                <label for="mdp">Mot de passe :</label>
-                <input type="password" id="mdp" name="mdp" required
-                       placeholder="Votre mot de passe">
+        <label>Mot de passe :</label><br>
+        <input type="password" name="mdp" required><br><br>
 
-                <input type="submit" value="Se connecter">
-            </fieldset>
-        </form>
+        <button type="submit">Se connecter</button>
+
+    </form>
+
+    <script>
+        function toggleLogin() {
+            var type = document.getElementById('type').value;
+            var champLogin = document.getElementById('champ_login');
+            if (type === 'gest')
+                champLogin.style.display = 'block';
+            else
+                champLogin.style.display = 'none';
+        }
+    </script>
 
     </section>
 

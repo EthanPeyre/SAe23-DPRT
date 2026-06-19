@@ -1,7 +1,7 @@
 <?php
 /* administration.php
- * Administration page accessible only by the site administrator.
- * Allows adding and deleting buildings, rooms, and sensors via forms.
+ * Page d'administration finale fusionnée avec la logique du prototype.
+ * Permet d'ajouter et supprimer des bâtiments, salles, et capteurs.
  */
 
 $page_title   = 'Administration – SAE23 IUT Blagnac';
@@ -11,23 +11,23 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Access restricted to admin role only
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+// Vérification de sécurité combinée (Prototype + Final)
+if (!isset($_SESSION['auth']) || $_SESSION['auth'] !== TRUE || !isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     header('Location: login.php');
-    exit;
+    exit();
 }
 
-require_once 'db_connect.php';
+require_once 'mysql.php';
 require_once 'header.php';
 
 $message = '';
 $erreur  = '';
 
-/* =================== POST actions =================== */
+/* =================== Actions POST (Formulaires) =================== */
 
 $action = $_POST['action'] ?? '';
 
-/* ----- Add a building ----- */
+/* ----- Ajouter un bâtiment ----- */
 if ($action === 'ajouter_batiment') {
     $nom = trim($_POST['nom_batiment'] ?? '');
     $id_compte = (int)($_POST['id_compte'] ?? 0);
@@ -44,7 +44,7 @@ if ($action === 'ajouter_batiment') {
     }
 }
 
-/* ----- Delete a building ----- */
+/* ----- Supprimer un bâtiment ----- */
 if ($action === 'supprimer_batiment') {
     $id = (int)($_POST['id_batiment'] ?? 0);
     if ($id > 0) {
@@ -57,7 +57,7 @@ if ($action === 'supprimer_batiment') {
     }
 }
 
-/* ----- Add a room ----- */
+/* ----- Ajouter une salle ----- */
 if ($action === 'ajouter_salle') {
     $nom      = trim($_POST['nom_salle']   ?? '');
     $type     = trim($_POST['type_salle']  ?? '');
@@ -78,7 +78,7 @@ if ($action === 'ajouter_salle') {
     }
 }
 
-/* ----- Delete a room ----- */
+/* ----- Supprimer une salle ----- */
 if ($action === 'supprimer_salle') {
     $id = (int)($_POST['id_salle'] ?? 0);
     if ($id > 0) {
@@ -91,7 +91,7 @@ if ($action === 'supprimer_salle') {
     }
 }
 
-/* ----- Add a sensor ----- */
+/* ----- Ajouter un capteur ----- */
 if ($action === 'ajouter_capteur') {
     $nom   = trim($_POST['nom_capteur']  ?? '');
     $type  = trim($_POST['type_capteur'] ?? '');
@@ -113,7 +113,7 @@ if ($action === 'ajouter_capteur') {
     }
 }
 
-/* ----- Delete a sensor ----- */
+/* ----- Supprimer un capteur ----- */
 if ($action === 'supprimer_capteur') {
     $id = (int)($_POST['id_capteur'] ?? 0);
     if ($id > 0) {
@@ -126,40 +126,21 @@ if ($action === 'supprimer_capteur') {
     }
 }
 
-/* ====================== Fetch data for listing  ========================= */
-
-// Manager accounts (for the add-building form)
-$comptes_gest = mysqli_query($conn,
-    "SELECT id_compte, login FROM Compte WHERE role = 'gestionnaire' ORDER BY login");
-
-// All buildings
-$batiments = mysqli_query($conn,
-    "SELECT b.id_batiment, b.nom_batiment, c.login AS gestionnaire
-     FROM Batiment b JOIN Compte c ON b.id_compte = c.id_compte
-     ORDER BY b.nom_batiment");
-
-// All rooms (with building)
-$salles = mysqli_query($conn,
-    "SELECT s.id_salle, s.nom_salle, s.type_salle, s.capacite, b.nom_batiment
-     FROM Salle s JOIN Batiment b ON s.id_batiment = b.id_batiment
-     ORDER BY b.nom_batiment, s.nom_salle");
-
-// All buildings (for room-add select)
-$batiments_select = mysqli_query($conn,
-    "SELECT id_batiment, nom_batiment FROM Batiment ORDER BY nom_batiment");
-
-// All sensors (with room)
-$capteurs = mysqli_query($conn,
-    "SELECT c.id_capteur, c.nom_capteur, c.type_capteur, c.unite, s.nom_salle
-     FROM Capteur c JOIN Salle s ON c.id_salle = s.id_salle
-     ORDER BY s.nom_salle, c.nom_capteur");
-
-// All rooms (for sensor-add select)
-$salles_select = mysqli_query($conn,
-    "SELECT id_salle, nom_salle FROM Salle ORDER BY nom_salle");
+// Requêtes de sélection pour remplir les listes et les tableaux
+$comptes_gest = mysqli_query($conn, "SELECT id_compte, login FROM Compte WHERE role = 'gestionnaire' ORDER BY login");
+$batiments = mysqli_query($conn, "SELECT b.id_batiment, b.nom_batiment, c.login AS gestionnaire FROM Batiment b JOIN Compte c ON b.id_compte = c.id_compte ORDER BY b.nom_batiment");
+$salles = mysqli_query($conn, "SELECT s.id_salle, s.nom_salle, s.type_salle, s.capacite, b.nom_batiment FROM Salle s JOIN Batiment b ON s.id_batiment = b.id_batiment ORDER BY b.nom_batiment, s.nom_salle");
+$batiments_select = mysqli_query($conn, "SELECT id_batiment, nom_batiment FROM Batiment ORDER BY nom_batiment");
+$capteurs = mysqli_query($conn, "SELECT c.id_capteur, c.nom_capteur, c.type_capteur, c.unite, s.nom_salle FROM Capteur c JOIN Salle s ON c.id_salle = s.id_salle ORDER BY s.nom_salle, c.nom_capteur");
+$salles_select = mysqli_query($conn, "SELECT id_salle, nom_salle FROM Salle ORDER BY nom_salle");
 ?>
 
 <main>
+
+    <section class="Zone-utilisateur">
+        <h2>Bienvenue, <?php echo htmlspecialchars($_SESSION['login']); ?> !</h2>
+        <p class="alerte-info">Vous êtes connecté sur l'espace d'administration réservé aux administrateurs du système IoT.</p>
+    </section>
 
     <?php if ($message !== ''): ?>
         <p class="alerte-succes"><?php echo htmlspecialchars($message); ?></p>
@@ -168,7 +149,6 @@ $salles_select = mysqli_query($conn,
         <p class="alerte-erreur"><?php echo htmlspecialchars($erreur); ?></p>
     <?php endif; ?>
 
-    <!-- ===== Buildings ===== -->
     <section>
         <h2>Gestion des bâtiments</h2>
 
@@ -179,8 +159,7 @@ $salles_select = mysqli_query($conn,
                 <input type="hidden" name="action" value="ajouter_batiment">
 
                 <label for="nom_batiment">Nom du bâtiment :</label>
-                <input type="text" id="nom_batiment" name="nom_batiment" required
-                       placeholder="Ex : Bâtiment RT">
+                <input type="text" id="nom_batiment" name="nom_batiment" required placeholder="Ex : Bâtiment RT">
 
                 <label for="id_compte">Gestionnaire :</label>
                 <select id="id_compte" name="id_compte" required>
@@ -219,7 +198,6 @@ $salles_select = mysqli_query($conn,
         </table>
     </section>
 
-    <!-- ===== Rooms ===== -->
     <section>
         <h2>Gestion des salles</h2>
 
@@ -277,7 +255,6 @@ $salles_select = mysqli_query($conn,
         </table>
     </section>
 
-    <!-- ===== Sensors ===== -->
     <section>
         <h2>Gestion des capteurs</h2>
 
