@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
                 or die("Execution de la requete impossible : $requete");
 
             $ligne = mysqli_fetch_row($resultat);
-            if ($motdep == $ligne[0])
+            if ($ligne && $motdep == $ligne[0])
             {
                 $_SESSION["auth"] = TRUE;
                 mysqli_close($id_bd);
@@ -61,7 +61,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
             $login  = mysqli_real_escape_string($id_bd, $login);
             $motdep = mysqli_real_escape_string($id_bd, $motdep);
 
-            $requete  = "SELECT ges_login FROM batiment WHERE ges_login = '$login' AND ges_mdp = '$motdep'";
+            /* On recupere egalement id_bat, necessaire pour que gest.php
+               sache de quel batiment afficher les mesures */
+            $requete  = "SELECT ges_login, id_bat FROM batiment WHERE ges_login = '$login' AND ges_mdp = '$motdep'";
             $resultat = mysqli_query($id_bd, $requete)
                 or die("Execution de la requete impossible : $requete");
 
@@ -70,6 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
             {
                 $_SESSION["auth_gest"] = TRUE;
                 $_SESSION["ges_login"] = $login;
+                $_SESSION["id_bat"]    = $ligne[1];
                 mysqli_close($id_bd);
                 echo "<script type='text/javascript'>document.location.replace('gest.php');</script>";
             }
