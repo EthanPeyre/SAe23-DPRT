@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+ <html lang="fr">
+  <head>
+   <meta charset="UTF-8" />
+   <title>Acceuil</title>
+   <link rel="stylesheet" type="text/css" href="./styles/style.css" />
+    <!-- Menu -->
+    <header>
+		 <nav>
+			<ul>		
+				<li><a href="#.html" >Accueil</a></li>
+				<li><a href="consultation.php">Consultation</a></li>
+				<li><a href="MentionsLegales.html">Mention légales</a></li>
+				<li><a href="gestion_projet.html">Gestion du projet</a></li>
+				<li><a href="login.php" >Se connecter</a></li>
+
+		</ul> 
+	</nav>
+  </header>  
+  </head>
+  <body>
+    <h1><br />Acceuil : SAé23<br /><br /></h1>
+    <hr/>
+    <h2>Présentation du projet</h2>
+        <p>
+            Cette application web permet de visualiser les données collectées par les capteurs
+            installés dans les bâtiments de l'IUT de Blagnac. Elle s'inscrit dans le cadre de
+            la SAE23 (Mettre en place une solution informatique pour l'entreprise) du Bachelor
+            Universitaire de Technologie – Réseaux et Télécommunications.
+        </p>
+        <p>
+            Les mesures proviennent d'un bus <strong>MQTT</strong> et sont stockées dans une
+            base de données <strong>MySQL</strong> via un script planifié (<em>crontab</em>).
+            La chaîne de traitement repose sur des conteneurs Docker : Mosquitto, Node-RED,
+            InfluxDB et Grafana.
+        </p>
+
+
+   <footer>
+    <p><a href="index.html">Acceuil</a></p>
+    <p><a href="login.php">Acc&egrave;s limit&eacute; : Administration de la base de donn&eacute;es</a></p>
+   </footer>
+  </body>
+</html>
