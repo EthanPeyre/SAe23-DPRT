@@ -25,19 +25,22 @@
  * de la VM (voir crontab @reboot, fichier README ou TP).
  */
 
-/* Adresse IP de la VM hebergeant le broker Mosquitto */
-$ip_mosquitto = "10.90.13.31"; // A REMPLACER par l'IP reelle de la VM Mosquitto
+/* Parametres de connexion au broker MQTT du departement */
+$host_mosquitto = "mqtt.iut-blagnac.fr";
+$port_mosquitto = "8883";
+$user_mosquitto = "student";
+$pass_mosquitto = "student";
 
 /* Acces a la base MySQL */
-include("/opt/lampp/htdocs/sae23/mysql.php");
+include("mysql.php");
 
 /*
  * Ouverture d'un pipe vers mosquitto_sub.
  * -F '%t|%p' : on demande un format topic puis payload, separes par '|',
  * ce qui evite l'ambiguite si le payload contenait des espaces.
- * On souscrit a tous les topics correspondant au pattern AM107/by-room/+/data
+ * On souscrit a tous les topics correspondant au pattern sensors/AM107/by-room/+/data
  */
-$commande = "mosquitto_sub -h $ip_mosquitto -t 'AM107/by-room/+/data' -F '%t|%p'";
+$commande = "mosquitto_sub -h $host_mosquitto -p $port_mosquitto -u $user_mosquitto -P $pass_mosquitto -t 'sensors/AM107/by-room/+/data' -F '%t|%p'";
 $pipe = popen($commande, "r");
 
 if (!$pipe)
@@ -45,7 +48,7 @@ if (!$pipe)
 	die("Impossible de lancer mosquitto_sub. Verifiez l'adresse IP et que mosquitto-clients est installe.\n");
 }
 
-echo "En ecoute sur le bus MQTT (AM107/by-room/+/data)...\n";
+echo "En ecoute sur le bus MQTT (sensors/AM107/by-room/+/data)...\n";
 
 while (!feof($pipe))
 {
@@ -69,8 +72,8 @@ while (!feof($pipe))
 	$topic = substr($ligne, 0, $pos);
 	$payload = substr($ligne, $pos + 1);
 
-	/* Extraction du nom de la salle depuis le topic AM107/by-room/{room}/data */
-	if (!preg_match('#AM107/by-room/([^/]+)/data#', $topic, $matches))
+	/* Extraction du nom de la salle depuis le topic sensors/AM107/by-room/{room}/data */
+	if (!preg_match('#sensors/AM107/by-room/([^/]+)/data#', $topic, $matches))
 	{
 		echo "Topic non reconnu, ignore : $topic\n";
 		continue;
