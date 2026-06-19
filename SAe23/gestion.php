@@ -17,6 +17,7 @@ if (!isset($_SESSION['auth_gest']) || $_SESSION['auth_gest'] !== TRUE) {
     <meta charset="UTF-8">
     <title>Page Admin</title>
     <link rel="stylesheet" type="text/css" href="./styles/style.css" />
+    <meta http-equiv="refresh" content="60" />
         <!-- Menu -->
     <header>
 		<nav>		

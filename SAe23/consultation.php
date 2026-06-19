@@ -4,6 +4,7 @@
    <meta charset="UTF-8" />
    <title>Consultation</title>
    <link rel="stylesheet" type="text/css" href="./styles/style.css" />
+   <meta http-equiv="refresh" content="60" />
     <!-- Menu -->
     <header>
 		 <nav>
