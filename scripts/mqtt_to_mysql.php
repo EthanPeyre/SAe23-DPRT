@@ -32,7 +32,7 @@ $user_mosquitto = "student";
 $pass_mosquitto = "student";
 
 /* Acces a la base MySQL (chemin absolu car ce script est dans /opt/lampp/scripts/) */
-include("/opt/lampp/htdocs/PrototypeSAe23/mysql.php");
+include("/opt/lampp/htdocs/SAe23/mysql.php");
 
 /*
  * Ouverture d'un pipe vers mosquitto_sub.
