@@ -9,21 +9,22 @@
 	   <meta charset="UTF-8" />
 	   <title>Identification erron&eacute;e</title>
 	   <link rel="stylesheet" type="text/css" href="./styles/style.css" />
-	   
-	       <header>
+	 </head>
+
+	<body>
+		
+		<!-- Menu -->
+	<header>
 		 <nav>
 			<ul>		
 				<li><a href="index.html" >Accueil</a></li>
 				<li><a href="login.php" >Se connecter</a></li>
 				<li><a href="#.html">Consultation</a></li>
 				<li><a href="gestion.html">Gestion du projet</a></li>
-		</ul> 
-	</nav>
- </header>
+			</ul> 
+		</nav>
+ 	</header>
  
-	 </head>
-
-	<body>
 		<!-- Affichage entete -->
 		<?php 
 			$_SESSION = array(); // Réinitialisation du tableau de session
