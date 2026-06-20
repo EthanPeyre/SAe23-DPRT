@@ -155,7 +155,7 @@ $batiment = mysqli_fetch_assoc($resultatBatiment);
     </section>
 
     <footer>
-        <p><a href="index.html">Acceuil</a></p>
+        <p><a href="index.html">Accueil</a></p>
         <p><a href="login.php">Acc&egrave;s limit&eacute; : Administration de la base de donn&eacute;es</a></p>
     </footer>
 
