@@ -6,13 +6,13 @@ if (!isset($_SESSION['auth_gest']) || $_SESSION['auth_gest'] !== TRUE) {
     exit();
 }
 
-/* id_bat du gestionnaire, enregistre en session lors du login.php */
+/* id_bat from the manager, saved to session during login.php */
 $id_bat = $_SESSION['id_bat'];
 
-/* Acces a la base (deplace ici car on en a besoin avant le HTML pour le nom du batiment) */
+/* Give access to the data base (moved here to have the building's name in the HTML page) */
 include("mysql.php");
 
-/* Recuperation du nom du batiment gere par ce gestionnaire */
+/* Retrieval of the name of the building managed by this manager */
 $id_bat_safe = mysqli_real_escape_string($id_bd, $id_bat);
 $requeteBatiment = "SELECT nom_bat FROM batiment WHERE id_bat = '$id_bat_safe'";
 $resultatBatiment = mysqli_query($id_bd, $requeteBatiment)
@@ -67,7 +67,7 @@ $batiment = mysqli_fetch_assoc($resultatBatiment);
             </thead>
             <tbody>
                 <?php
-                    /* Toutes les mesures des capteurs des salles du batiment du gestionnaire */
+                    /* All the measurements of the sensors in the manager’s building */
                     $requete = "
                         SELECT s.nom_salle, c.nom_capt, c.type_capt, c.unite,
                             m.valeur, m.date, m.horaire
@@ -115,8 +115,8 @@ $batiment = mysqli_fetch_assoc($resultatBatiment);
             <tbody>
                 <?php
                     /*
-                     * Calcul de la moyenne, du min et du max pour chaque capteur
-                     * des salles appartenant au batiment du gestionnaire.
+                     * Calculation of the average, min and max for each sensor
+                     * of the rooms belonging to the manager’s building.
                      */
                     $requeteStats = "
                         SELECT s.nom_salle, c.nom_capt, c.unite,

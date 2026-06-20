@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-// Redirection si déjà connecté
+// If already connected to a login, redirection
 if (isset($_SESSION['auth']) && $_SESSION['auth'] === TRUE) {
     header("Location: admin.php");
     exit();
@@ -61,8 +61,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
             $login  = mysqli_real_escape_string($id_bd, $login);
             $motdep = mysqli_real_escape_string($id_bd, $motdep);
 
-            /* On recupere egalement id_bat, necessaire pour que gestion.php
-               sache de quel batiment afficher les mesures */
+            /*  We also retrieve id_bat, which is necessary for the gestion.php
+               know which building to display the measurements in */
             $requete  = "SELECT ges_login, id_bat FROM batiment WHERE ges_login = '$login' AND ges_mdp = '$motdep'";
             $resultat = mysqli_query($id_bd, $requete)
                 or die("Execution de la requete impossible : $requete");
@@ -115,16 +115,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
 
     <form method="POST" action="login.php">
 
+    <!-- Gives the login option in a moving menu -->
+
         <label>Type de connexion :</label><br>
         <select name="type" id="type" onchange="toggleLogin()">
             <option value="admin">Administrateur</option>
             <option value="gest">Gestionnaire</option>
         </select><br><br>
 
+    <!-- Form : fill in your login name (required) -->
+
         <div id="champ_login" style="display:none;">
             <label>Login :</label><br>
             <input type="text" name="login"><br><br>
         </div>
+   
+   <!-- Form : fill in your password (required) -->
 
         <label>Mot de passe :</label><br>
         <input type="password" name="mdp" required><br><br>
@@ -132,6 +138,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
         <button type="submit">Se connecter</button>
 
     </form>
+
+    <!-- JavaScript : display the dynamic login menu depending on weather you choose admin or gest -->
 
     <script>
         function toggleLogin() {

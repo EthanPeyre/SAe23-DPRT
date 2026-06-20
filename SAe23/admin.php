@@ -1,19 +1,19 @@
 <?php
 session_start();
 
-// Verifie que l'utilisateur est bien authentifie en tant qu'administrateur
+// Checks if the user's identity is comptible (administrator in this case)
 if (!isset($_SESSION['auth']) || $_SESSION['auth'] !== TRUE) {
     header("Location: login.php");
     exit();
 }
 
-/* Acces a la base de donnees */
+/* Give access to the data base */
 include("mysql.php");
 
 /*
- * Traitement des actions du formulaire (ajout/suppression).
- * On traite cela AVANT d'afficher le HTML, pour pouvoir rediriger
- * proprement apres chaque action (evite les doubles soumissions au refresh).
+ * Form action choice treatment (Add/Delete).
+ * We treat the data before generating the HTML page, to redirect accordingly after each action is made
+ * (to avoid having doubles once the refresh is acted out).
  */
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']))
 {
@@ -22,22 +22,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']))
 	switch ($action)
 	{
 		case 'ajouter_batiment':
+			/* mysqli_real_escape_string : This function is used to create a legal SQL string that you can use in an SQL statement. 
+			The given string is encoded to produce an escaped SQL string, 
+			taking into account the current character set of the connection. */
 			$nom_bat = mysqli_real_escape_string($id_bd, $_POST['nom_batiment']);
 			$ges_login = mysqli_real_escape_string($id_bd, $_POST['ges_login']);
 			$ges_mdp = mysqli_real_escape_string($id_bd, $_POST['ges_mdp']);
 
-			/* Calcul automatique du prochain id_bat disponible */
+			/* Automatic calculation of the next id_bat available */
 			$requeteMax = "SELECT MAX(id_bat) AS max_id FROM batiment";
 			$resultatMax = mysqli_query($id_bd, $requeteMax);
 			$ligneMax = mysqli_fetch_assoc($resultatMax);
 			$nouvel_id = $ligneMax['max_id'] ? $ligneMax['max_id'] + 1 : 1000;
-
+			
+			/* Inser the new data collection into the data base in order to create a new building */
 			$requete = "
 				INSERT INTO batiment (id_bat, nom_bat, ges_login, ges_mdp)
 				VALUES ('$nouvel_id', '$nom_bat', '$ges_login', '$ges_mdp')
 			";
 			mysqli_query($id_bd, $requete)
-				or die("Execution de la requete impossible : $requete");
+				or die("Execution de la requete impossible : $requete"); /* Error occuring */
 			break;
 
 		case 'supprimer_batiment':
@@ -90,12 +94,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']))
 			break;
 	}
 
-	/* Redirection vers la meme page pour eviter une re-soumission du formulaire au refresh (F5) */
+	/* Redirection to the same page to avoid resubmitting the form during the refresh (F5) */
 	header("Location: admin.php");
 	exit();
 }
 
-/* Requetes d'affichage : liste des batiments (table + select pour le formulaire salle) */
+/* Display requests: list of buildings (table + select for the room form) */
 $requeteBatiments = "SELECT id_bat, nom_bat, ges_login FROM batiment ORDER BY nom_bat";
 $batiments = mysqli_query($id_bd, $requeteBatiments)
 	or die("Execution de la requete impossible : $requeteBatiments");
@@ -103,7 +107,7 @@ $batiments = mysqli_query($id_bd, $requeteBatiments)
 $batiments_select = mysqli_query($id_bd, $requeteBatiments)
 	or die("Execution de la requete impossible : $requeteBatiments");
 
-/* Liste des salles, avec le nom du batiment associe */
+/* List of rooms, with the name of the associated building */
 $requeteSalles = "
 	SELECT s.nom_salle, s.type_salle, s.capacite, b.nom_bat
 	FROM salle s
@@ -117,7 +121,7 @@ $requeteSallesSelect = "SELECT nom_salle FROM salle ORDER BY nom_salle";
 $salles_select = mysqli_query($id_bd, $requeteSallesSelect)
 	or die("Execution de la requete impossible : $requeteSallesSelect");
 
-/* Liste des capteurs */
+/* Sensors list */
 $requeteCapteurs = "SELECT nom_capt, type_capt, unite, nom_salle FROM capteur ORDER BY nom_salle, nom_capt";
 $capteurs = mysqli_query($id_bd, $requeteCapteurs)
 	or die("Execution de la requete impossible : $requeteCapteurs");

@@ -42,13 +42,12 @@
 			</thead>
 			<tbody>
 				<?php
-					/* Acces a la base */
+					/* Give access to the data base */
 					include ("mysql.php");
 
 					/*
-					 * Pour chaque capteur, on recupere la derniere mesure enregistree
-					 * (la mesure ayant la date/horaire la plus recente), ainsi que
-					 * les informations de la salle et du batiment correspondants.
+					 * For each sensor, we collect the last recorded measurement (the measure with the most recent date/time)
+					 * as well as the information of the corresponding room and building.
 					 */
 					$requete = "
 						SELECT b.nom_bat, s.nom_salle, c.nom_capt, c.type_capt,

@@ -1,5 +1,5 @@
 <?php
-	// Démarrage de la session
+	// Session start
 	session_start();
 ?>
 
@@ -25,11 +25,11 @@
 		</nav>
  	</header>
  
-		<!-- Affichage entete -->
+		<!-- For a dynamic header display -->
 		<?php 
-			$_SESSION = array(); // Réinitialisation du tableau de session
-			session_destroy();   // Destruction de la session
-			unset($_SESSION);    // Destruction du tableau de session
+			$_SESSION = array(); // Session Table Reset
+			session_destroy();   // Session delete
+			unset($_SESSION);    // Session table destruction
 
 		?>
 		<section>
