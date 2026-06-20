@@ -1,44 +1,41 @@
 #!/opt/lampp/bin/php
 <?php
 /*
- * Programme: mqtt_to_mysql.php
- * Description: Souscrit au bus MQTT (broker Mosquitto) via mosquitto_sub
- *              et insere dans la table mesure chaque metrique recue
- *              correspondant a un capteur existant en base.
+ * Description: Subscription au broker Mosquitto via mosquitto_sub
+ *              insert metric into the wished table
+ *              according to an existing sensor.
  *
- * Format de topic : AM107/by-room/{roomName}/data
- * Exemple          : AM107/by-room/E101/data
+ * Topic : AM107/by-room/{roomName}/data
  *
- * Format de payload (JSON, tableau de 2 objets) :
+ * Payload format (JSON) :
  * [
  *   { "temperature": 24.3, "humidity": 32, "co2": 431, ... },
  *   { "deviceName": "AM107-35", "room": "E105", "floor": 1, "Building": "E" }
  * ]
  *
- * Principe : pour chaque cle numerique du 1er objet (temperature, humidity, ...),
- * on cherche en base un capteur dont le nom_salle correspond a la piece et dont
- * le type_capt correspond a cette cle (insensible a la casse). Si trouve, on
- * insere la mesure. Les cles sans capteur correspondant (co2, tvoc, Latitude...)
- * sont simplement ignorees -> permet d'ajouter facilement d'autres capteurs plus tard.
+ * Principe : for each digital key in the first subject (temperature, humidity, ...),
+ * We are looking for a sensor whose room name corresponds to the part and whose sensor type corresponds to said key (break-insensitive).
+ * If found we insert the measure. 
+ * Keys without corresponding sensors (CO2, TVOC, Latitude, etc.) are simply ignored. 
+ * This allows you to easily add other sensors later.
  *
- * Ce script tourne en continu et doit etre lance en arriere-plan au demarrage
- * de la VM (voir crontab @reboot, fichier README ou TP).
+ * This script runs continuously and must be launched in the background at startup of the VM (see crontab @reboot, README or TP file).
  */
 
-/* Parametres de connexion au broker MQTT du departement */
+/* Parameters for connecting to the MQTT broker from the department */
 $host_mosquitto = "mqtt.iut-blagnac.fr";
 $port_mosquitto = "8883";
 $user_mosquitto = "student";
 $pass_mosquitto = "student";
 
-/* Acces a la base MySQL (chemin absolu car ce script est dans /opt/lampp/scripts/) */
+/*Give access to the MySQL data base (absolute path because this script is in /opt/lampp/scripts/) */
 include("/opt/lampp/htdocs/SAe23/mysql.php");
 
 /*
- * Ouverture d'un pipe vers mosquitto_sub.
- * -F '%t|%p' : on demande un format topic puis payload, separes par '|',
- * ce qui evite l'ambiguite si le payload contenait des espaces.
- * On souscrit a tous les topics correspondant au pattern sensors/AM107/by-room/+/data
+ * Opening a pipe to mosquitto_sub.
+ * -F '%t|%p': we ask for a topic then payload format, separated by '|',
+ * which avoids ambiguity if the payload contained spaces.
+ * We subscribe to all the topics corresponding to the sensors/AM107/by-room/+/data pattern.
  */
 $commande = "mosquitto_sub -h $host_mosquitto -p $port_mosquitto -u $user_mosquitto -P $pass_mosquitto -t 'sensors/AM107/by-room/+/data' -F '%t|%p'";
 $pipe = popen($commande, "r");
@@ -61,7 +58,7 @@ while (!feof($pipe))
 
 	$ligne = trim($ligne);
 
-	/* Separation topic / payload sur le premier '|' */
+	/* Topic separation / payload on the first '|' */
 	$pos = strpos($ligne, "|");
 	if ($pos === false)
 	{
@@ -72,7 +69,7 @@ while (!feof($pipe))
 	$topic = substr($ligne, 0, $pos);
 	$payload = substr($ligne, $pos + 1);
 
-	/* Extraction du nom de la salle depuis le topic sensors/AM107/by-room/{room}/data */
+	/* Extraction of the room name from the topic sensors/AM107/by-room/{room}/data */
 	if (!preg_match('#sensors/AM107/by-room/([^/]+)/data#', $topic, $matches))
 	{
 		echo "Topic non reconnu, ignore : $topic\n";
@@ -80,7 +77,7 @@ while (!feof($pipe))
 	}
 	$nom_salle = $matches[1];
 
-	/* Decodage du payload JSON */
+	/* Decoding the JSON payload */
 	$donnees = json_decode($payload, true);
 
 	if (!is_array($donnees) || !isset($donnees[0]) || !is_array($donnees[0]))
@@ -94,10 +91,10 @@ while (!feof($pipe))
 	$date_mesure = date("Y-m-d");
 	$horaire_mesure = date("H:i:s");
 
-	/* Pour chaque metrique presente dans le payload */
+	/* For each metric present in the payload */
 	foreach ($mesures as $cle => $valeur)
 	{
-		/* On ignore les champs non numeriques (ex: futurs champs texte) */
+		/* We ignore non-numeric fields (e.g., future text fields) */
 		if (!is_numeric($valeur))
 		{
 			continue;
@@ -107,9 +104,9 @@ while (!feof($pipe))
 		$cle_safe = mysqli_real_escape_string($id_bd, $cle);
 
 		/*
-		 * Recherche du capteur correspondant a cette salle et a ce type de mesure.
-		 * type_capt doit donc contenir "temperature", "humidity", etc. (insensible
-		 * a la casse) pour les capteurs que tu as crees dans ta table capteur.
+		 * Search for the sensor corresponding to this room and this type of measurement.
+		 * type_capt must therefore contain "temperature", "humidity", etc. (break-insensitive)
+		 * for the sensors you have created in your sensor table.
 		 */
 		$requeteCapteur = "
 			SELECT nom_capt
@@ -123,7 +120,7 @@ while (!feof($pipe))
 
 		if (!$resultatCapteur || mysqli_num_rows($resultatCapteur) == 0)
 		{
-			/* Pas de capteur correspondant en base pour cette metrique -> on ignore */
+			/* No corresponding sensor at the base for this metric -> we ignore */
 			continue;
 		}
 
