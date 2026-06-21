@@ -109,6 +109,11 @@ La base de données MySQL respecte les contraintes suivantes :
 - Gestion de version via **Git et Github**
 
 ---
+## Où installer les fichiers
+
+- **scripts** : /opt/lampp/
+- **SAe23** : /opt/lampp/htdocs
+---
 
 ## 📄 Licence
 
